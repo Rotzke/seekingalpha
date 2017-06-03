@@ -4,10 +4,10 @@
 from __future__ import print_function
 import os
 import csv
+from datetime import datetime, timedelta
 
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
 
 
 def get_time(timestamp):
