@@ -41,32 +41,29 @@ def write_data(output, date, data):
 def parse_data(time_window, output):
     """Parsing posts in user-defined time window."""
     time_delta = datetime.now() - timedelta(days=int(time_window))
-    try:
-        driver = webdriver.PhantomJS(executable_path="./phantomjs")
-        driver.get("""https://seekingalpha.com/author/the-geoteam/"""
-                   """stocktalks#view=posts_activities""")
-        feed = BeautifulSoup(driver.page_source,
-                             'html.parser').findAll('div',
-                                                    {'class':
-                                                     'card'})
-        driver.quit()
-        driver.close()
-        for i in feed:
-            if get_time(i.span.string) >= time_delta:
-                data = {}
-                data['date'] = get_time(i.span.string).strftime('%Y/%m/%d')
-                data['text'] = i.find('div',
-                                      {'class':
-                                       'headline'}).text.encode('utf-8')
-                tickers = i.find('div', {'class': 'title'}).findAll('a')
-                if len(tickers) > 1:
-                    data['tickers'] = (', ').join([i.string
-                                                   for i in tickers][1:])
-                else:
-                    data['tickers'] = ''
-                write_data(output, data['date'], data)
-    except all as e:
-        print(e)
+    driver = webdriver.PhantomJS(executable_path="./phantomjs")
+    driver.get("""https://seekingalpha.com/author/the-geoteam/"""
+               """stocktalks#view=posts_activities""")
+    feed = BeautifulSoup(driver.page_source,
+                         'html.parser').findAll('div',
+                                                {'class':
+                                                 'card'})
+    driver.quit()
+    driver.close()
+    for i in feed:
+        if get_time(i.span.string) >= time_delta:
+            data = {}
+            data['date'] = get_time(i.span.string).strftime('%Y/%m/%d')
+            data['text'] = i.find('div',
+                                  {'class':
+                                   'headline'}).text.encode('utf-8')
+            tickers = i.find('div', {'class': 'title'}).findAll('a')
+            if len(tickers) > 1:
+                data['tickers'] = (', ').join([i.string
+                                               for i in tickers][1:])
+            else:
+                data['tickers'] = ''
+            write_data(output, data['date'], data)
 
 
 if __name__ == '__main__':
